@@ -1,0 +1,38 @@
+// スプレッドシートのID
+const SPREAD_SHEET_ID = '';
+
+// シートの名前
+const SHEET_NAME = '';
+
+// doGet 関数
+function doGet() {
+  // スプレッドシートをIDで取得
+  const app = SpreadsheetApp.openById(SPREAD_SHEET_ID);
+
+  // シート名を取得
+  const sheet = app.getSheetByName(SHEET_NAME);
+
+  // シート内データを取得
+  const data = getSheetData(sheet);
+
+  // JSON形式でデータを返す
+  return ContentService.createTextOutput(JSON.stringify({ data: data }, null, 2)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// シート内データを取得する関数
+function getSheetData(sheet) {
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0];
+  const data = [];
+
+  // データをオブジェクトに変換
+  for (let i = 1; i < values.length; i++) {
+    const row = {};
+    for (let j = 0; j < headers.length; j++) {
+      row[headers[j]] = values[i][j];
+    }
+    data.push(row);
+  }
+
+  return data;
+}
